@@ -51,5 +51,5 @@ http POST 0.0.0.0:5000/alert < samples/multiple.json
 
 # Alternatives
 
-- https://github.com/free/jiralert - Golang, inspired this variant
+- https://github.com/free/jiralert - Golang, it inspired my implementation
 - https://github.com/fabxc/jiralerts - Python, less flexible IMO
