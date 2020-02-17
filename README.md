@@ -6,11 +6,11 @@ Adapter to transform Alertmanager events to Jira trackable tasks.
 
 # Usage
 
-Run a service:
+Ready to run as a docker container:
 
 ```
-docker build . -t alertmanager-jira-py
-docker run -ti -p 8080:8080 alertmanager-jira-py
+docker build . -t agrrh/alertmanager-jira-py:1.0.0
+docker run -ti -p 8080:8080 agrrh/alertmanager-jira-py:1.0.0
 ```
 
 Then send your Alertmanager webhooks to this adapter:
@@ -24,8 +24,6 @@ receivers:
       - url: http://127.0.0.1:8080/alert
 ```
 
-That's how it works.
-
 ## Logic summary
 
 - Once alert is triggered, adapter will create new task in your Jira project
@@ -34,7 +32,7 @@ That's how it works.
   - task closed with any but `resolution_wontfix` resolution
   - task newer than `issues_updated_in` time
 
-  Then adapter will re-open same task instead of creating new one
+  ... then adapter will re-open same task instead of creating new one.
 
 ## Testing
 
@@ -50,3 +48,8 @@ http POST 0.0.0.0:5000/alert < samples/resolved.json
 # Multiple
 http POST 0.0.0.0:5000/alert < samples/multiple.json
 ```
+
+# Alternatives
+
+- https://github.com/free/jiralert - Golang, inspired this variant
+- https://github.com/fabxc/jiralerts - Python, less flexible IMO
