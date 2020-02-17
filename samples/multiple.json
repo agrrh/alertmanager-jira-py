@@ -1,0 +1,52 @@
+{
+  "receiver": "slack-alert",
+  "status": "firing",
+  "alerts": [
+    {
+      "annotations": {
+        "description": "Important job has failed at ci.example.org",
+        "identifier": "Project/Job1"
+      },
+      "endsAt": "2019-01-01T12:00:00Z",
+      "generatorURL": "<redacted>",
+      "labels": {
+        "alertname": "JobFailed",
+        "instance": "ci.example.org",
+        "jenkins_job": "Job 1",
+        "job": "jenkins",
+        "severity": "critical"
+      },
+      "startsAt": "2019-01-01T01:00:00Z",
+      "status": "resolved"
+    }, {
+      "annotations": {
+        "description": "Important job has failed at ci.example.org",
+        "identifier": "Project/Job2"
+      },
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "<redacted>",
+      "labels": {
+        "alertname": "JobFailed",
+        "instance": "ci.example.org",
+        "jenkins_job": "Job 2",
+        "job": "jenkins",
+        "severity": "critical"
+      },
+      "startsAt": "2019-01-01T00:30:00Z",
+      "status": "resolved"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "JobFailed"
+  },
+  "commonLabels": {
+    "alertname": "JobFailed",
+    "instance": "ci.example.org",
+    "job": "jenkins",
+    "severity": "critical"
+  },
+  "commonAnnotations": {},
+  "externalURL": "http://prometheus.example.org",
+  "version": "4",
+  "groupKey": "{}:{alertname=\"JobFailed\"}"
+}

@@ -1,0 +1,54 @@
+{
+  "receiver": "jira-infra",
+  "status": "resolved",
+  "alerts": [
+      {
+          "status": "resolved",
+          "labels": {
+              "alertname": "DiskSpace",
+              "device": "/dev/xvda1",
+              "env": "dev",
+              "envname": "main",
+              "fstype": "ext4",
+              "instance": "127.0.0.1:9100",
+              "ip_addr": "127.0.0.1",
+              "job": "test-job",
+              "mountpoint": "/",
+              "project": "Dev Project",
+              "serverGroup": "dev-hosts",
+              "severity": "critical"
+          },
+          "annotations": {
+              "description": "Low disk space on `/`: 4.154% free",
+              "identifier": "Dev Project / dev-hosts / 127.0.0.1"
+          },
+          "startsAt": "2018-12-31T12:00:00Z",
+          "endsAt": "2019-01-01T01:00:00Z",
+          "generatorURL": "<redacted>"
+      }
+  ],
+  "groupLabels": {
+      "alertname": "DiskSpace"
+  },
+  "commonLabels": {
+      "alertname": "DiskSpace",
+      "device": "/dev/xvda1",
+      "env": "dev",
+      "envname": "main",
+      "fstype": "ext4",
+      "instance": "127.0.0.1:9100",
+      "ip_addr": "127.0.0.1",
+      "job": "test-job",
+      "mountpoint": "/",
+      "project": "Dev Project",
+      "serverGroup": "dev-hosts",
+      "severity": "critical"
+  },
+  "commonAnnotations": "annotations": {
+      "description": "Low disk space on `/`: 4.154% free",
+      "identifier": "Dev Project / dev-hosts / 127.0.0.1"
+  },
+  "externalURL": "http://prometheus.eample.org",
+  "version": "4",
+  "groupKey": "{}/{}:{alertname=\"DiskSpace\"}"
+}

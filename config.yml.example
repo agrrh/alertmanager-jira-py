@@ -1,0 +1,20 @@
+---
+
+daemon:
+  host: 127.0.0.1
+  port: 8080
+  debug: true
+
+jira:
+  server: http://localhost
+  user: user
+  password: password
+  project: PROJECT
+  issuetype: Alert
+  # Attempt to move issue through this transition to re-open in case alert was re-triggered
+  # Set this to empty string ("") to disable re-opening at all
+  transition_reopen: Reopen
+  # Which resolution prevents re-opening
+  resolution_wontfix: Won't Fix
+  # Do not reopen issues older that whis limit, create new ones instead
+  issues_updated_in: 1w
