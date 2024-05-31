@@ -58,7 +58,11 @@ class Jira(object):
 
         try:
             issue = self.client.search_issues(
-                'project="{project}" AND issuetype="{issuetype}" AND labels="{labels}" AND updated >= -{max_age} order by created desc'.format(
+                """project="{project}"
+                AND issuetype="{issuetype}"
+                AND labels="{labels}"
+                AND updated >= -{max_age}
+                ORDER BY created DESC""".format(
                     project=self.project, issuetype=self.issuetype, labels=labels, max_age=self.updated_in
                 ),
                 maxResults=1,
