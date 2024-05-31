@@ -4,6 +4,8 @@ import hashlib
 # https://jira.readthedocs.io/en/master/examples.html
 import jira
 
+from app.app import app
+
 
 class Jira(object):
     def __init__(self, **kwargs):
@@ -29,6 +31,19 @@ class Jira(object):
         labels_string = ",".join(["=".join((key, val.replace(" ", "_"))) for key, val in labels.items()])
         labels_hash = hashlib.md5(labels_string.encode()).hexdigest()
         return labels_hash
+
+    def issue_process(self, issue, data):
+        app.logger.info("Seeking for related issue ...")
+        issue = jira.issue_find(data)
+
+        app.logger.debug("Found issue: {}".format(issue))
+
+        if issue:
+            app.logger.info("Updating existing issue")
+            self.issue_update(issue, data)
+        else:
+            app.logger.info("Creating new issue")
+            self.issue_create(data)
 
     def issue_create(self, data):
         """Create issue.

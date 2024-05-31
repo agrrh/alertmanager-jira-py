@@ -25,18 +25,7 @@ def alert():
 
         app.stats["events"][data["status"]] += 1
 
-        issue = jira.issue_find(data)
-        app.logger.debug("Found issue: {}".format(issue))
+        app.logger.warning("Processing data ...")
+        jira.issue_process(data)
 
-        if issue:
-            app.logger.debug("Updating existing issue")
-            jira.issue_update(issue, data)
-            if len(event["alerts"]) == 1:
-                return "Already Reported", 200
-        else:
-            app.logger.debug("Creating new issue")
-            jira.issue_create(data)
-            if len(event["alerts"]) == 1:
-                return "Created", 201
-
-    return "Accepted", 202
+    return "Processed", 202
