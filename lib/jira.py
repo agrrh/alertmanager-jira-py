@@ -74,6 +74,28 @@ class Jira(object):
 
         return issue
 
+    def __issue_check_should_update(self, issue):
+        return not (issue.fields.resolution and issue.fields.resolution.name == self.resolution_wontfix)
+
+    def __issue_transition_if_available(self, issue):
+        transitions_available = self.client.transitions(issue)
+
+        for t in transitions_available:
+            if t["name"] == self.transition_reopen:
+                self.client.transition_issue(issue, t["id"])
+
+    def __issue_add_comment(self, issue, data):
+        comments = self.client.comments(issue)
+        comment_is_first = len(comments) < 1
+
+        for alert in data["alerts"]:
+            text = "{code}" + yaml.dump(alert, default_flow_style=False) + "{code}"
+
+            comment_is_unique = text not in [c.body for c in comments]
+
+            if comment_is_first or comment_is_unique:
+                self.client.add_comment(issue, text)
+
     def issue_update(self, issue_id, data):
         """Update issue.
             Re-open if closed.
@@ -83,31 +105,20 @@ class Jira(object):
         """
         issue = self.client.issue(issue_id)
 
-        if issue.fields.resolution and issue.fields.resolution.name == self.resolution_wontfix:
-            return False
+        should_update = self.__issue_check_should_update(issue)
 
-        # Reopen alert once if there's at least 1 non-"resolved" status
-        for alert in data["alerts"]:
-            if alert["status"] == "resolved":
-                continue
+        if should_update:
+            # Reopen alert once if there's at least 1 non-"resolved" status
+            non_resolved_alerts_iter = filter(lambda a: a.get("status") != "resolved", data["alerts"])
 
-            transitions_available = self.client.transitions(issue)
-            for t in transitions_available:
-                if t["name"] == self.transition_reopen:
-                    self.client.transition_issue(issue, t["id"])
+            if non_resolved_alerts_iter:
+                self.__issue_transition_if_available(issue)
 
-            break
+            self.__issue_add_comment(issue, data)
 
-        comments = self.client.comments(issue)
-        comment_is_first = len(comments) < 1
+            return True
 
-        for alert in data["alerts"]:
-            text = "{code}" + yaml.dump(alert, default_flow_style=False) + "{code}"
-            comment_is_unique = text not in [c.body for c in comments]
-            if comment_is_first or comment_is_unique:
-                self.client.add_comment(issue, text)
-
-        return True
+        return False
 
     def issue_list(self, count=20):
         try:
