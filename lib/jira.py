@@ -7,16 +7,16 @@ import jira
 
 class Jira(object):
     def __init__(self, **kwargs):
-        self.server = kwargs.get('server', 'http://127.0.0.1')
-        self.project = kwargs.get('project', 'PROJECT')
-        self.issuetype = kwargs.get('issuetype', 'Task')
+        self.server = kwargs.get("server", "http://127.0.0.1")
+        self.project = kwargs.get("project", "PROJECT")
+        self.issuetype = kwargs.get("issuetype", "Task")
 
-        self.transition_reopen = kwargs.get('transition_reopen', 'Reopen')
-        self.resolution_wontfix = kwargs.get('resolution_wontfix', "Won't fix")
-        self.updated_in = kwargs.get('issues_updated_in', "1w")
+        self.transition_reopen = kwargs.get("transition_reopen", "Reopen")
+        self.resolution_wontfix = kwargs.get("resolution_wontfix", "Won't fix")
+        self.updated_in = kwargs.get("issues_updated_in", "1w")
 
-        user = kwargs.get('user', 'user')
-        password = kwargs.get('password', 'password')
+        user = kwargs.get("user", "user")
+        password = kwargs.get("password", "password")
 
         self._auth(user, password, self.server)
 
@@ -25,8 +25,8 @@ class Jira(object):
 
     def __issue_labels_string(self, data):
         """Extract labels from issue data and for a fingerprint line."""
-        labels = data['alerts'][0]['labels']
-        labels_string = ','.join(['='.join((key, val.replace(' ', '_'))) for key, val in labels.items()])
+        labels = data["alerts"][0]["labels"]
+        labels_string = ",".join(["=".join((key, val.replace(" ", "_"))) for key, val in labels.items()])
         labels_hash = hashlib.md5(labels_string.encode()).hexdigest()
         return labels_hash
 
@@ -35,14 +35,14 @@ class Jira(object):
         Returns issue ID.
         """
         issue_dict = {
-            'project': {'key': self.project},
-            'issuetype': {'name': self.issuetype},
-            'summary': 'Alert: {name} ({values})'.format(
-                name=data['alerts'][0]['labels'].get('alertname'),
-                values=', '.join([val for key, val in data['alerts'][0]['labels'].items() if key != 'alertname'])
+            "project": {"key": self.project},
+            "issuetype": {"name": self.issuetype},
+            "summary": "Alert: {name} ({values})".format(
+                name=data["alerts"][0]["labels"].get("alertname"),
+                values=", ".join([val for key, val in data["alerts"][0]["labels"].items() if key != "alertname"]),
             ),
-            'labels': [self.__issue_labels_string(data)],
-            'description': '{code}' + yaml.dump(data, default_flow_style=False) + '{code}',
+            "labels": [self.__issue_labels_string(data)],
+            "description": "{code}" + yaml.dump(data, default_flow_style=False) + "{code}",
         }
         new_issue = self.client.create_issue(fields=issue_dict)
         return new_issue.key
@@ -59,12 +59,9 @@ class Jira(object):
         try:
             issue = self.client.search_issues(
                 'project="{project}" AND issuetype="{issuetype}" AND labels="{labels}" AND updated >= -{max_age} order by created desc'.format(
-                    project=self.project,
-                    issuetype=self.issuetype,
-                    labels=labels,
-                    max_age=self.updated_in
+                    project=self.project, issuetype=self.issuetype, labels=labels, max_age=self.updated_in
                 ),
-                maxResults=1
+                maxResults=1,
             )
             if len(issue) > 0:
                 issue = issue.pop()
@@ -86,22 +83,22 @@ class Jira(object):
             return False
 
         # Reopen alert once if there's at least 1 non-"resolved" status
-        for alert in data['alerts']:
-            if alert['status'] == 'resolved':
+        for alert in data["alerts"]:
+            if alert["status"] == "resolved":
                 continue
 
             transitions_available = self.client.transitions(issue)
             for t in transitions_available:
-                if t['name'] == self.transition_reopen:
-                    self.client.transition_issue(issue, t['id'])
+                if t["name"] == self.transition_reopen:
+                    self.client.transition_issue(issue, t["id"])
 
             break
 
         comments = self.client.comments(issue)
         comment_is_first = len(comments) < 1
 
-        for alert in data['alerts']:
-            text = '{code}' + yaml.dump(alert, default_flow_style=False) + '{code}'
+        for alert in data["alerts"]:
+            text = "{code}" + yaml.dump(alert, default_flow_style=False) + "{code}"
             comment_is_unique = text not in [c.body for c in comments]
             if comment_is_first or comment_is_unique:
                 self.client.add_comment(issue, text)
@@ -112,10 +109,9 @@ class Jira(object):
         try:
             issues = self.client.search_issues(
                 'project="{project}" AND issuetype={issuetype} order by created desc'.format(
-                    project=self.project,
-                    issuetype=self.issuetype
+                    project=self.project, issuetype=self.issuetype
                 ),
-                maxResults=count
+                maxResults=count,
             )
         except jira.exceptions.JIRAError:
             issues = False
