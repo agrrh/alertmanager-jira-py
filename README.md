@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/3d6f7656136e5a152cb4/maintainability)](https://codeclimate.com/github/agrrh/alertmanager-jira-py/maintainability)
+
 # Info
 
 Adapter to transform Alertmanager events to Jira trackable tasks.
